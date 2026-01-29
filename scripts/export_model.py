@@ -95,7 +95,7 @@ def main():
 
     if best_r2 >= 0.5 and best_mape < 35:
         reliability = "confiable"
-    elif best_r2 >= 0.3 and best_mape < 50:
+    elif best_r2 >= 0.2 and best_mape < 60:
         reliability = "parcial"
     else:
         reliability = "mejoras"

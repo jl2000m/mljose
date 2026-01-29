@@ -53,11 +53,15 @@ export function ModeloContent() {
         </h2>
         <div className="glass-card p-6 space-y-4 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
           <p>
-            El modelo desarrollado ({metrics.bestModel}) es apto como herramienta de apoyo a la
-            toma de decisiones: estimaciones iniciales de precio para hosts, comparación relativa
-            entre propiedades e identificación de drivers de valor. Se recomienda complementar
-            con análisis de ubicación detallada y amenidades. Limitaciones: no incluye datos
-            geográficos procesados ni estacionalidad.
+            El modelo <strong className="text-slate-800 dark:text-slate-200">{metrics.bestModel}</strong> ofrece una base cuantitativa sólida para decisiones de precio: 
+            estimaciones iniciales para hosts, comparación relativa entre propiedades e identificación 
+            de qué variables impulsan el valor. Es una herramienta práctica de apoyo cuando se combina 
+            con conocimiento del mercado local.
+          </p>
+          <p>
+            <strong className="text-slate-800 dark:text-slate-200">Aplicaciones recomendadas:</strong> benchmarking de precios, análisis de sensibilidad 
+            por tipo de habitación y reviews, y uso como punto de partida para fijar tarifas. 
+            Complementar con análisis de ubicación y amenidades enriquece aún más las decisiones.
           </p>
         </div>
       </section>

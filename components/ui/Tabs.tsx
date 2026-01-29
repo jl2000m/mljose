@@ -52,7 +52,7 @@ export function TabsList({
 }) {
   return (
     <div
-      className={`inline-flex h-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1 gap-1 ${className}`}
+      className={`flex flex-nowrap gap-1 overflow-x-auto sm:overflow-visible sm:inline-flex h-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1 min-w-0 ${className}`}
       role="tablist"
     >
       {children}
@@ -77,7 +77,7 @@ export function TabsTrigger({
       role="tab"
       aria-selected={isSelected}
       onClick={() => onValueChange(value)}
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+      className={`shrink-0 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors ${
         isSelected
           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow"
           : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"

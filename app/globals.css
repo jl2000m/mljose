@@ -5,8 +5,8 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-  --card: rgba(255, 255, 255, 0.8);
-  --card-border: rgba(226, 232, 240, 0.8);
+  --card: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(226, 232, 240, 0.9);
   --aden-red: #E12B26;
   --aden-green: #34C759;
 }
@@ -14,7 +14,7 @@
 .dark {
   --background: #0f172a;
   --foreground: #f1f5f9;
-  --card: rgba(30, 41, 59, 0.8);
+  --card: rgba(30, 41, 59, 0.85);
   --card-border: rgba(71, 85, 105, 0.5);
 }
 
@@ -23,8 +23,24 @@ body {
   background: var(--background);
 }
 
+/* Page background: subtle gradient + grid for depth */
+.bg-page {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 43, 38, 0.06), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(52, 199, 89, 0.05), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 100%, rgba(52, 199, 89, 0.04), transparent);
+}
+
+.dark .bg-page {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 43, 38, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(52, 199, 89, 0.06), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 100%, rgba(52, 199, 89, 0.05), transparent);
+}
+
 @layer utilities {
   .glass-card {
-    @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-600/50 rounded-xl shadow-lg;
+    @apply bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/90 dark:border-slate-600/50 rounded-2xl shadow-lg shadow-slate-200/30 dark:shadow-black/20;
   }
 }

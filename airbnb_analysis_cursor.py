@@ -322,11 +322,13 @@ print(f"\n{comparison_df.to_string(index=False)}")
 best_model_name = comparison_df.iloc[0]['Modelo']
 best_model = results[best_model_name]['model']
 best_r2 = results[best_model_name]['r2']
+best_rmse = results[best_model_name]['rmse']
 best_mae = results[best_model_name]['mae']
 best_mape = results[best_model_name]['mape']
 
 print(f"\n🏆 MEJOR MODELO: {best_model_name}")
 print(f"   • R²: {best_r2:.4f} ({best_r2*100:.2f}% de varianza explicada)")
+print(f"   • RMSE: ${best_rmse:.2f}")
 print(f"   • MAE: ${best_mae:.2f}")
 print(f"   • MAPE: {best_mape:.2f}%")
 
@@ -516,15 +518,19 @@ print(f"""
    ADEN International Business School
 """)
 
-# Guardar resultados en CSV
+# Guardar resultados en CSV (RMSE y MAE son distintos)
 results_summary = pd.DataFrame({
     'Métrica': ['R² Score', 'RMSE', 'MAE', 'MAPE (%)', 'Error Mediano', 
                 'Error P75', 'Error P90'],
-    'Valor': [f'{best_r2:.4f}', f'${best_mae:.2f}', f'${best_mae:.2f}', 
+    'Valor': [f'{best_r2:.4f}', f'${best_rmse:.2f}', f'${best_mae:.2f}', 
               f'{best_mape:.2f}%', f'${median_error:.2f}', 
               f'${p75_error:.2f}', f'${p90_error:.2f}']
 })
 results_summary.to_csv('metricas_modelo.csv', index=False)
 print("\n📄 Métricas guardadas: metricas_modelo.csv")
+
+# Guardar comparación de los 3 modelos para la web
+comparison_df.to_csv('model_comparison.csv', index=False)
+print("📄 Comparación de modelos guardada: model_comparison.csv")
 
 print("\n🎉 ¡Todo listo! Revisa los archivos generados.")

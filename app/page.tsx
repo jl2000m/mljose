@@ -67,88 +67,72 @@ export default function HomePage() {
   }, [result]);
 
   return (
-    <div className="space-y-16">
+    <div className="min-h-[60vh] space-y-14 sm:space-y-20">
+      {/* Hero */}
       <motion.section
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center space-y-4"
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center space-y-5 pt-4 sm:pt-8"
       >
-        <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-400 dark:to-accent-400 bg-clip-text text-transparent">
-          Análisis y Modelo Predictivo Airbnb
-        </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Actividad Integradora de Machine Learning: exploración de datos, modelos
-          de regresión y predictor de precios.
+        <p className="text-xs sm:text-sm font-medium uppercase tracking-widest text-primary-600 dark:text-primary-400">
+          Machine Learning · Actividad Integradora 1
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-slate-600 dark:text-slate-400">
-          <GraduationCap className="w-5 h-5 flex-shrink-0" />
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-50 max-w-4xl mx-auto leading-[1.1]">
+          <span className="bg-gradient-to-r from-primary-600 to-primary-500 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent">
+            Análisis y Modelo Predictivo
+          </span>
+          <br />
+          <span className="bg-gradient-to-r from-accent-600 to-accent-500 dark:from-accent-400 dark:to-accent-300 bg-clip-text text-transparent">
+            Airbnb
+          </span>
+        </h1>
+        <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed px-2">
+          Exploración de datos, modelos de regresión y predictor de precios para
+          propiedades.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-slate-500 dark:text-slate-500 text-sm sm:text-base">
+          <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" aria-hidden />
           <span>
             {STUDENT.name} · Pasaporte {STUDENT.passport} · {STUDENT.institution}
           </span>
         </div>
       </motion.section>
 
-      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((item, i) => (
-          <motion.div
-            key={item.href}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 * (i + 1) }}
-          >
-            <Link href={item.href}>
-              <div className="glass-card p-6 h-full flex flex-col hover:shadow-xl transition-shadow duration-300 group">
-                <div className="mb-4 p-3 rounded-lg bg-primary-100 dark:bg-primary-900/30 w-fit group-hover:bg-primary-200 dark:group-hover:bg-primary-800/50 transition-colors">
-                  <item.icon className="w-8 h-8 text-primary-600 dark:text-primary-400" />
-                </div>
-                <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                  {item.label}
-                </h2>
-                <p className="text-slate-600 dark:text-slate-400 text-sm flex-1">
-                  {item.description}
-                </p>
-                <span className="mt-4 inline-flex items-center text-primary-600 dark:text-primary-400 font-medium text-sm group-hover:underline">
-                  Ver más →
-                </span>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
-      </section>
-
+      {/* Predictor section — 2 columns: form + results | 3 nav cards */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.4 }}
-        className="space-y-8"
+        transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        className="space-y-6 sm:space-y-8"
       >
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          Predictor de precios
-        </h2>
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <PredictorForm onResult={handleResult} onError={setError} />
-          <div className="flex-1 w-full lg:max-w-xl space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+          {/* Column 1: predictor form + results */}
+          <div className="flex flex-col gap-6 w-full lg:max-w-xl">
+            <PredictorForm onResult={handleResult} onError={setError} />
             {error && (
-              <div className="rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4">
+              <div
+                className="rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-4 text-sm"
+                role="alert"
+              >
                 {error}
               </div>
             )}
             {result && (
-              <>
-                <div className="glass-card p-6">
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">
+              <div className="space-y-4 sm:space-y-5">
+                <div className="glass-card p-5 sm:p-6">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
                     Precio predicho
                   </p>
-                  <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
+                  <p className="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400 tabular-nums">
                     ${result.predicted_price.toFixed(2)}
                   </p>
                   <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                    Intervalo aproximado (±MAE): ${result.interval_low.toFixed(2)} – $
+                    Intervalo (±MAE): ${result.interval_low.toFixed(2)} – $
                     {result.interval_high.toFixed(2)}
                   </p>
                 </div>
-                <div className="glass-card p-5">
+                <div className="glass-card p-5 sm:p-6">
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-2">
                     Recomendación
                   </h3>
@@ -157,15 +141,49 @@ export default function HomePage() {
                   </p>
                 </div>
                 {chartData.length > 0 && (
-                  <div className="glass-card p-5">
+                  <div className="glass-card p-5 sm:p-6">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-200 mb-3">
-                      Distribución de precios en el dataset
+                      Distribución de precios
                     </h3>
                     <PriceHistogram data={chartData} title="" xLabel="Rango de precio (USD)" />
                   </div>
                 )}
-              </>
+              </div>
             )}
+          </div>
+
+          {/* Column 2: 3 rows — cards Análisis, Modelo, Predictor */}
+          <div className="flex flex-col gap-4 sm:gap-5">
+            {cards.map((item, i) => (
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.15 + 0.06 * i, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Link
+                  href={item.href}
+                  className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-xl"
+                >
+                  <div className="glass-card p-5 sm:p-6 w-full flex flex-col sm:flex-row sm:items-center gap-4 transition-all duration-300 group hover:shadow-xl hover:border-slate-300/80 dark:hover:border-slate-500/50 active:scale-[0.99]">
+                    <div className="p-3 rounded-xl bg-primary-100/80 dark:bg-primary-900/30 w-fit transition-colors group-hover:bg-primary-200/80 dark:group-hover:bg-primary-800/40 shrink-0">
+                      <item.icon className="w-7 h-7 sm:w-8 sm:h-8 text-primary-600 dark:text-primary-400" aria-hidden />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                        {item.label}
+                      </h2>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                        {item.description}
+                      </p>
+                      <span className="mt-3 inline-flex items-center gap-1 text-primary-600 dark:text-primary-400 font-medium text-sm group-hover:gap-2 transition-all">
+                        Ver más →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </motion.section>
@@ -173,8 +191,8 @@ export default function HomePage() {
       <motion.footer
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="text-center text-sm text-slate-500 dark:text-slate-500 border-t border-slate-200 dark:border-slate-700 pt-8"
+        transition={{ delay: 0.5 }}
+        className="text-center text-xs sm:text-sm text-slate-500 dark:text-slate-500 border-t border-slate-200 dark:border-slate-700 pt-6 sm:pt-8 pb-2"
       >
         Machine Learning · ADEN International Business School · Enero 2026
       </motion.footer>

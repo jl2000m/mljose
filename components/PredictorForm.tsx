@@ -26,6 +26,8 @@ export interface PredictResult {
   interval_low: number;
   interval_high: number;
   mae: number;
+  /** Median price for this room_type in the dataset (for recommendations). */
+  dataset_median?: number;
 }
 
 interface PredictorFormProps {
@@ -79,11 +81,11 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
         });
         const data = await res.json();
         if (!res.ok) {
-          onError?.(data.error ?? "Error al predecir.");
+          onError?.(data.message ?? data.error ?? "Error al predecir.");
           return;
         }
-        if (data.error) {
-          onError?.(data.error);
+        if (data.available === false || data.error) {
+          onError?.(data.message ?? data.error ?? "Error al predecir.");
           return;
         }
         onResult(
@@ -92,6 +94,7 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
             interval_low: data.interval_low,
             interval_high: data.interval_high,
             mae: data.mae,
+            dataset_median: data.dataset_median,
           },
           values
         );
@@ -104,17 +107,33 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
     [values, onResult, onError]
   );
 
+  const inputBase =
+    "w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-4 py-3 sm:py-2.5 text-base sm:text-sm transition-[border-color,box-shadow] focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 dark:focus:border-primary-400 dark:focus:ring-primary-400/25";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 glass-card p-6 max-w-xl">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 sm:space-y-5 glass-card p-5 sm:p-6 max-w-xl w-full"
+    >
       <div>
-        <label htmlFor="room_type" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">
+          Predictor de precios
+        </h2>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          Completa los campos para estimar el precio de una propiedad.
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="room_type" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
           Tipo de habitación
         </label>
         <select
           id="room_type"
           value={values.room_type}
           onChange={(e) => update("room_type", e.target.value)}
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className={`${inputBase} cursor-pointer`}
+          aria-describedby={errors.room_type ? "room_type-error" : undefined}
         >
           {ROOM_TYPES.map((rt) => (
             <option key={rt} value={rt}>
@@ -123,13 +142,15 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
           ))}
         </select>
         {errors.room_type && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.room_type}</p>
+          <p id="room_type-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+            {errors.room_type}
+          </p>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="minimum_nights" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="minimum_nights" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             Noches mínimas
           </label>
           <input
@@ -139,14 +160,17 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
             max={365}
             value={values.minimum_nights}
             onChange={(e) => update("minimum_nights", parseInt(e.target.value, 10) || 0)}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className={inputBase}
+            aria-describedby={errors.minimum_nights ? "minimum_nights-error" : undefined}
           />
           {errors.minimum_nights && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.minimum_nights}</p>
+            <p id="minimum_nights-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+              {errors.minimum_nights}
+            </p>
           )}
         </div>
         <div>
-          <label htmlFor="number_of_reviews" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="number_of_reviews" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             Número de reseñas
           </label>
           <input
@@ -155,17 +179,20 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
             min={0}
             value={values.number_of_reviews}
             onChange={(e) => update("number_of_reviews", parseInt(e.target.value, 10) || 0)}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className={inputBase}
+            aria-describedby={errors.number_of_reviews ? "number_of_reviews-error" : undefined}
           />
           {errors.number_of_reviews && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.number_of_reviews}</p>
+            <p id="number_of_reviews-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+              {errors.number_of_reviews}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="reviews_per_month" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="reviews_per_month" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             Reviews por mes
           </label>
           <input
@@ -176,14 +203,17 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
             step={0.1}
             value={values.reviews_per_month}
             onChange={(e) => update("reviews_per_month", parseFloat(e.target.value) || 0)}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className={inputBase}
+            aria-describedby={errors.reviews_per_month ? "reviews_per_month-error" : undefined}
           />
           {errors.reviews_per_month && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.reviews_per_month}</p>
+            <p id="reviews_per_month-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+              {errors.reviews_per_month}
+            </p>
           )}
         </div>
         <div>
-          <label htmlFor="availability_365" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+          <label htmlFor="availability_365" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
             Días disponibles (año)
           </label>
           <input
@@ -193,16 +223,19 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
             max={365}
             value={values.availability_365}
             onChange={(e) => update("availability_365", parseInt(e.target.value, 10) || 0)}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className={inputBase}
+            aria-describedby={errors.availability_365 ? "availability_365-error" : undefined}
           />
           {errors.availability_365 && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.availability_365}</p>
+            <p id="availability_365-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+              {errors.availability_365}
+            </p>
           )}
         </div>
       </div>
 
       <div>
-        <label htmlFor="calculated_host_listings_count" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor="calculated_host_listings_count" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
           Listados del host
         </label>
         <input
@@ -211,17 +244,20 @@ export function PredictorForm({ onResult, onError }: PredictorFormProps) {
           min={0}
           value={values.calculated_host_listings_count}
           onChange={(e) => update("calculated_host_listings_count", parseInt(e.target.value, 10) || 0)}
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className={inputBase}
+          aria-describedby={errors.calculated_host_listings_count ? "calculated_host_listings_count-error" : undefined}
         />
         {errors.calculated_host_listings_count && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.calculated_host_listings_count}</p>
+          <p id="calculated_host_listings_count-error" className="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+            {errors.calculated_host_listings_count}
+          </p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white font-medium py-3 px-4 transition-colors"
+        className="w-full rounded-xl bg-primary-600 hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 disabled:pointer-events-none text-white font-semibold py-3.5 sm:py-3 px-4 text-base sm:text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[48px] sm:min-h-0"
       >
         {loading ? "Calculando…" : "Predecir precio"}
       </button>

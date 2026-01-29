@@ -4,20 +4,18 @@ import { useState, useEffect } from "react";
 import { PredictorForm, type PredictResult } from "@/components/PredictorForm";
 import { PriceHistogram } from "@/components/Charts";
 
-const MEDIAN_BY_ROOM: Record<string, number> = {
-  "Entire home/apt": 150,
-  "Private room": 70,
-  "Shared room": 45,
-  "Hotel room": 120,
-};
-
-function getRecommendation(price: number, roomType: string): string {
-  const median = MEDIAN_BY_ROOM[roomType] ?? 100;
-  if (price < median * 0.7)
-    return "Precio bajo respecto al promedio del tipo de habitación. Puede ser una buena opción para huéspedes con presupuesto limitado.";
-  if (price > median * 1.3)
-    return "Precio alto respecto al promedio. Asegúrate de ofrecer valor diferenciado (ubicación, amenidades, calidad) para justificar el precio.";
-  return "Precio dentro del rango típico para este tipo de habitación. Recomendable para una estrategia equilibrada.";
+function getRecommendation(
+  price: number,
+  datasetMedian: number | undefined
+): string {
+  if (datasetMedian == null || datasetMedian <= 0) {
+    return "La estimación se basa en el promedio de precios del dataset para este tipo de habitación. Usa el intervalo como referencia de variación típica.";
+  }
+  if (price < datasetMedian * 0.7)
+    return "Precio bajo respecto a la mediana del tipo de habitación en el dataset. Puede ser una buena opción para huéspedes con presupuesto limitado.";
+  if (price > datasetMedian * 1.3)
+    return "Precio alto respecto a la mediana del tipo de habitación. Asegúrate de ofrecer valor diferenciado (ubicación, amenidades, calidad) para justificar el precio.";
+  return "Precio dentro del rango típico para este tipo de habitación en el dataset. Recomendable para una estrategia equilibrada.";
 }
 
 export function PredictorClient() {
@@ -72,7 +70,7 @@ export function PredictorClient() {
               Recomendación
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              {getRecommendation(result.predicted_price, lastInput?.room_type ?? "Entire home/apt")}
+              {getRecommendation(result.predicted_price, result.dataset_median)}
             </p>
           </div>
 

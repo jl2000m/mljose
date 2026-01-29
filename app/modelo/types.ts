@@ -10,4 +10,6 @@ export interface ModelMetricsData {
   predictionsVsReal?: { real: number; pred: number }[];
   residuals?: { pred: number; residual: number }[];
   errorsHistogram?: { bin: string; count: number }[];
+  /** Source of metrics: real files vs reference fallback. */
+  dataSource?: "metrics.json" | "csv" | "fallback";
 }
